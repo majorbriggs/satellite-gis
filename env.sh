@@ -1,4 +1,4 @@
-if [ ! -d venv]; then
+if [ ! -d venv ]; then
     virtualenv -p python3 venv
 fi
 . venv/bin/activate
