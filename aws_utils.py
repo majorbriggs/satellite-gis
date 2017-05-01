@@ -50,9 +50,10 @@ def get_bands_files(bands, dir_uri, output_dir):
         band_filename = "B{:>02}.jp2".format(band)
         file_key = dir_uri + band_filename
         img_dir = os.path.join(output_dir, dir_uri.replace('/',''))
-        os.mkdir(img_dir)
+        if not os.path.exists(img_dir):
+            os.mkdir(img_dir)
         client.download_file(sentinel_bucket_name, file_key, os.path.join(output_dir, img_dir, band_filename))
-
+    return img_dir
 
 if __name__ == '__main__':
-    get_preview_from_sentinel('tiles/34/U/CF/2015/10/6/0/', '.')
+    get_bands_files([2, 3, 4], 'tiles/34/U/DE/2016/5/23/0/', '.')
