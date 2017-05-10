@@ -3,9 +3,9 @@ from requests.auth import HTTPBasicAuth
 import os
 
 
-URL = 'http://ec2-52-28-28-248.eu-central-1.compute.amazonaws.com/geoserver/rest/'
+URL = 'http://ec2-35-158-55-99.eu-central-1.compute.amazonaws.com:8080/geoserver/rest/'
 headers = {'Content-Type': 'text/xml'}
-auth = HTTPBasicAuth(username=os.getenv('GEOSERVER_USERNAME'), password=os.getenv('GEOSERVER_PASSWORD'))
+auth = HTTPBasicAuth(username=os.getenv('GEOSERVER_USERNAME'), password='DaleCooper')
 
 def check_response(r):
     if r.status_code == 201:
@@ -29,5 +29,5 @@ def add_coverage_store(ws, cs):
     r = requests.post(url=url, headers=headers,
                   auth=auth, data='<coverageStore><name>{cs}</name><workspace>{ws}</workspace><type>GeoTIFF</type><enabled>true</enabled></coverageStore>'.format(cs=cs, ws=ws))
     check_response(r)
-
+create_workspace('sentinel')
 add_coverage_store('sentinel', 'SentinelImage_1')

@@ -7,6 +7,9 @@ import numpy
 import numpy as np
 import rasterio
 
+from timer import Timer
+
+
 logger = logging.getLogger(__name__)
 
 class Bands(IntEnum):
@@ -57,29 +60,36 @@ class BandCalculator:
         with self.get_band(Bands.R) as r_band:
             with self.get_band(Bands.G) as g_band:
                 with self.get_band(Bands.B) as b_band:
-                    r = self.wb(r_band.read(1, window=((x, y), (x, y))))
+                    with Timer('Reading band R'):
+                        r = self.wb(r_band.read(1, window=((x, y), (x, y))))
+                    with Timer('Reading band G'):
+                        g = self.wb(g_band.read(1, window=((x, y), (x, y))))
+                    with Timer('Reading band B'):
 
-                    g = self.wb(g_band.read(1, window=((x, y), (x, y))))
-                    b = self.wb(b_band.read(1, window=((x, y), (x, y))))
+                        b = self.wb(b_band.read(1, window=((x, y), (x, y))))
+                    with Timer('Writing RGB image'):
 
-                    with rasterio.open(
-                            'rgb.tiff', 'w',
-                            driver='GTiff', width=10000, height=10000, count=3,
-                            dtype=r.dtype, crs=r_band.crs, transform=r_band.transform) as dst:
-                        for k, arr in [(1, r), (2, g), (3, b)]:
-                            dst.write(arr, indexes=k)
+                        with rasterio.open(
+                                'rgb.tiff', 'w',
+                                driver='GTiff', width=10000, height=10000, count=3,
+                                dtype=r.dtype, crs=r_band.crs, transform=r_band.transform) as dst:
+                            for k, arr in [(1, r), (2, g), (3, b)]:
+                                dst.write(arr, indexes=k)
 
     def save_ndvi(self, x=0, y=10000):
         with self.get_band(Bands.R) as r_band:
             with self.get_band(Bands.NIR) as nir_band:
-                    r = r_band.read(1, window=((x, y), (x, y))).astype(numpy.float32)
-                    nir = nir_band.read(1, window=((x, y), (x, y))).astype(numpy.float32)
-                    ndvi = numpy.true_divide((nir-r), (nir + r))
+                    with Timer('Reading band R'):
+                        r = r_band.read(1, window=((x, y), (x, y))).astype(numpy.float32)
+                    with Timer('Opening band NIR'):
+                        nir = nir_band.read(1, window=((x, y), (x, y))).astype(numpy.float32)
+                    with Timer('CalculatingNDVI'):
+                        ndvi = numpy.true_divide((nir-r), (nir + r))
                     output_band = numpy.rint((ndvi) * 255).astype(numpy.uint8)
-
-                    with rasterio.open(
-                            'sentinel_ndvi.tiff', 'w',
-                            driver='GTiff', width=10000, height=10000, count=1,
-                            dtype=numpy.uint8, crs=r_band.crs, transform=r_band.transform, nodata=0) as dst:
-                        for k, arr in [(1, output_band)]:
-                            dst.write(arr, indexes=k)
+                    with Timer("Writing to output file"):
+                        with rasterio.open(
+                                'sentinel_ndvi.tiff', 'w',
+                                driver='GTiff', width=10000, height=10000, count=1,
+                                dtype=numpy.uint8, crs=r_band.crs, transform=r_band.transform, nodata=0) as dst:
+                            for k, arr in [(1, output_band)]:
+                                dst.write(arr, indexes=k)

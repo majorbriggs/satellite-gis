@@ -3,6 +3,7 @@ import botocore
 import json
 from collections import namedtuple
 import os
+from timer import Timer
 
 Image = namedtuple("AWSImageData", ['prefix', 'clouds', 'data_percentage', 'date'])
 
@@ -52,7 +53,8 @@ def get_bands_files(bands, dir_uri, output_dir):
         img_dir = os.path.join(output_dir, dir_uri.replace('/',''))
         if not os.path.exists(img_dir):
             os.mkdir(img_dir)
-        client.download_file(sentinel_bucket_name, file_key, os.path.join(output_dir, img_dir, band_filename))
+        with Timer('{} download'.format(band_filename)):
+            client.download_file(sentinel_bucket_name, file_key, os.path.join(output_dir, img_dir, band_filename))
     return img_dir
 
 if __name__ == '__main__':
