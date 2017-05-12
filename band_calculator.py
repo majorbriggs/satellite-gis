@@ -56,7 +56,7 @@ class BandCalculator:
         yield band
         band.close()
 
-    def save_rgb(self, x=0, y=10000):
+    def save_rgb(self, x=0, y=5000):
         with self.get_band(Bands.R) as r_band:
             with self.get_band(Bands.G) as g_band:
                 with self.get_band(Bands.B) as b_band:
@@ -71,12 +71,12 @@ class BandCalculator:
 
                         with rasterio.open(
                                 'rgb.tiff', 'w',
-                                driver='GTiff', width=10000, height=10000, count=3,
+                                driver='GTiff', width=y, height=y, count=3,
                                 dtype=r.dtype, crs=r_band.crs, transform=r_band.transform) as dst:
                             for k, arr in [(1, r), (2, g), (3, b)]:
                                 dst.write(arr, indexes=k)
 
-    def save_ndvi(self, x=0, y=10000):
+    def save_ndvi(self, x=0, y=5000):
         with self.get_band(Bands.R) as r_band:
             with self.get_band(Bands.NIR) as nir_band:
                     with Timer('Reading band R'):
@@ -89,7 +89,7 @@ class BandCalculator:
                     with Timer("Writing to output file"):
                         with rasterio.open(
                                 'sentinel_ndvi.tiff', 'w',
-                                driver='GTiff', width=10000, height=10000, count=1,
+                                driver='GTiff', width=y, height=y, count=1,
                                 dtype=numpy.uint8, crs=r_band.crs, transform=r_band.transform, nodata=0) as dst:
                             for k, arr in [(1, output_band)]:
                                 dst.write(arr, indexes=k)
