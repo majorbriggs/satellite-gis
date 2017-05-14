@@ -6,6 +6,7 @@ class Timer:
         self.name = name
 
     def __enter__(self):
+        print("Started "+self.name)
         self.t0 = time.time()
 
     def __exit__(self, exc_type, exc_val, exc_tb):

@@ -45,11 +45,16 @@ def add_new_ndvi(image_path):
     _process_and_upload(image_path, calculation='ndvi')
 
 def add_on_geoserver(image_key):
-    r = requests.get(GEOSERVER_FLASK_URL+"add_layer?imageKey="+image_key)
+    print("Calling REST service on GEOSERVER to download image from S3")
+    url = GEOSERVER_FLASK_URL+"add_layer?imageKey="+image_key
+    print("URL: "+url)
+
+    r = requests.get(url)
     if r.status_code == 200:
         return True
     else:
-        return r.content
+        print("Request failed {}".format(r.content))
+        return False
 
 
 if __name__ == "__main__":
