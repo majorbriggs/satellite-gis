@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask import make_response
 from background import check_image_exists
 from multiprocessing import Process
-from background import add_new_rgb
+from background import add_new_rgb, add_new_ndvi
 app = Flask(__name__)
 
 
@@ -27,10 +27,15 @@ def get_ndvi():
     path = request.args.get('path')
     if not path:
         return make_response('Bad request. Provide a non empty path parameter', 400)
-    # target: add to que
-
-    return make_response(jsonify({"path":path,
-                    "status":"Processing started"}), 202)
+    if check_image_exists(image_path=path, type='ndvi'):
+        return make_response(jsonify({"path":path, "status":"DONE"}))
+    if check_image_exists(image_path=path, type='ndvi_started'):
+        return make_response(jsonify({"path":path, "status":"IN_PROGRESS"}), 202)
+    else:
+        p = Process(target=add_new_ndvi(), kwargs={"image_path":path})
+        p.start()
+        return make_response(jsonify({"path":path,
+                    "status":"STARTED"}), 202)
 
 
 if __name__ == "__main__":
