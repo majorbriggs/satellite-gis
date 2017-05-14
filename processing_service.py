@@ -32,7 +32,7 @@ def get_ndvi():
     if check_image_exists(image_path=path, type='ndvi_started'):
         return make_response(jsonify({"path":path, "status":"IN_PROGRESS"}), 202)
     else:
-        p = Process(target=add_new_ndvi(), kwargs={"image_path":path})
+        p = Process(target=add_new_ndvi, kwargs={"image_path":path})
         p.start()
         return make_response(jsonify({"path":path,
                     "status":"STARTED"}), 202)
