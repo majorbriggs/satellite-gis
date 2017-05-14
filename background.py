@@ -50,11 +50,7 @@ def add_on_geoserver(image_key):
     print("URL: "+url)
 
     r = requests.get(url)
-    if r.status_code == 200:
-        return True
-    else:
-        print("Request failed {}".format(r.content))
-        return False
+    print("Response: {} {}".format(r.status_code, r.content))
 
 
 if __name__ == "__main__":
