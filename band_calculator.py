@@ -94,4 +94,4 @@ class BandCalculator:
                                            dtype=numpy.uint8, crs=r_band.crs, transform=r_band.transform, nodata=0) as dst:
                             for k, arr in [(1, output_band)]:
                                 dst.write(arr, indexes=k)
-        return self.rgb_filepath
+        return self.ndvi_filepath
