@@ -8,14 +8,14 @@ from timer import Timer
 Image = namedtuple("AWSImageData", ['prefix', 'clouds', 'data_percentage', 'date'])
 
 sentinel_bucket_name = 'sentinel-s2-l1c'
-
+BUCKET ='s2processedimages'
 prefix = 'tiles/34/U/CF/' # prefix for Pomeranian district
 
 s3 = boto3.resource('s3', region_name='eu-central-1')
 b = s3.Bucket(sentinel_bucket_name)
 
-client = boto3.client('s3', region_name='eu-central-1',
-                      config=botocore.client.Config(signature_version=botocore.UNSIGNED))
+client = boto3.client('s3', region_name='eu-central-1')#,
+#                      config=botocore.client.Config(signature_version=botocore.UNSIGNED))
 
 def get_images_data(prefix=prefix):
     result = client.list_objects(Bucket=sentinel_bucket_name,
@@ -50,12 +50,29 @@ def get_bands_files(bands, dir_uri, output_dir):
     for band in bands:
         band_filename = "B{:>02}.jp2".format(band)
         file_key = dir_uri + band_filename
-        img_dir = os.path.join(output_dir, dir_uri.replace('/',''))
-        if not os.path.exists(img_dir):
-            os.mkdir(img_dir)
+        #img_dir = os.path.join(output_dir, dir_uri.replace('/',''))
+        img_dir=output_dir
         with Timer('{} download'.format(band_filename)):
-            client.download_file(sentinel_bucket_name, file_key, os.path.join(output_dir, img_dir, band_filename))
+            client.download_file(sentinel_bucket_name, file_key, os.path.join(output_dir, band_filename))
     return img_dir
 
+def s3_create_file(filename, data=b''):
+    client.put_object(Key=filename, Bucket=BUCKET, Body=data)
+
+def s3_delete_file(key):
+    client.delete_object(Key=key, Bucket=BUCKET)
+
+def upload_to_s3(filepath, s3_filename = None, bucket='s2processedimages'):
+    if s3_filename is None:
+        s3_filename = filepath
+    client.upload_file(filepath, bucket, s3_filename)
+
+def check_file_exists(filepath, bucket='s2processedimages'):
+    try:
+        client.head_object(Bucket=bucket, Key=filepath)
+        return True
+    except:
+        return False
+
 if __name__ == '__main__':
-    get_bands_files([2, 3, 4], 'tiles/34/U/DE/2016/5/23/0/', '.')
+    print(check_file_exists('test.txt'))
