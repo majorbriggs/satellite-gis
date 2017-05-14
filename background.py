@@ -15,7 +15,7 @@ def create_temp_file(s3_name):
 
 def _process_and_upload(image_path, calculation='rgb'):
     b = BandCalculator(bands_dir=TEMP_DIR)
-    s3_name = image_path.replace('/', '')+'/{}'.format(calculation)
+    s3_name = image_path.replace('/', '')+'{}'.format(calculation)
     with create_temp_file(s3_name):
         if calculation == 'rgb':
             bands = [2, 3, 4]
@@ -32,7 +32,7 @@ def _process_and_upload(image_path, calculation='rgb'):
         add_on_geoserver(image_key=s3_name)
 
 def check_image_exists(image_path, type='rgb'):
-    filename = image_path.replace('/', '') + "/" + type
+    filename = image_path.replace('/', '') + type
     print("Checking if "+ filename + " exists")
     result =  check_file_exists(filename)
     print("Exists " if result else "Doesn't exist")
