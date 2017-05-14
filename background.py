@@ -49,9 +49,7 @@ def add_on_geoserver(image_key):
     url = GEOSERVER_FLASK_URL+"add_layer?imageKey="+image_key
     print("URL: "+url)
 
-    r = requests.get(url)
-    print("Response: {} {}".format(r.status_code, r.content))
-
+    requests.get(url)
 
 if __name__ == "__main__":
     add_new_rgb('tiles/34/U/DE/2016/5/23/0/')
