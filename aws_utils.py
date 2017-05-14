@@ -62,10 +62,15 @@ def s3_create_file(filename, data=b''):
 def s3_delete_file(key):
     client.delete_object(Key=key, Bucket=BUCKET)
 
+def s3_download_file(key, output_filepath):
+    client.download_file(Key=key, Bucket=BUCKET, Filename=output_filepath)
+    return True
+
 def upload_to_s3(filepath, s3_filename = None, bucket='s2processedimages'):
     if s3_filename is None:
         s3_filename = filepath
     client.upload_file(filepath, bucket, s3_filename)
+    print(s3_filename + " uploaded to S3")
 
 def check_file_exists(filepath, bucket='s2processedimages'):
     try:

@@ -2,7 +2,6 @@ import requests
 from requests.auth import HTTPBasicAuth
 import os
 
-
 URL = 'http://ec2-35-156-13-22.eu-central-1.compute.amazonaws.com:8080/geoserver/rest/'
 headers = {'Content-Type': 'text/xml'}
 auth = HTTPBasicAuth(username=os.getenv('GEOSERVER_USERNAME'), password='DaleCooper')
@@ -38,6 +37,8 @@ def add_layer(ws, cs, name, title):
     r = requests.post(url=url, headers=headers,
                   auth=auth, data=data)
     check_response(r)
+
+
 
 if __name__ == "__main__":
     create_workspace('sentinel')
