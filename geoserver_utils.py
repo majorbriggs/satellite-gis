@@ -2,8 +2,8 @@ from aws_utils import s3_download_file
 from geoserver_api import add_coverage_store, add_layer
 import os
 
-#GEOSERVER_DATA_DIR = "/home/ubuntu/satellite-gis/"
-GEOSERVER_DATA_DIR  = '/home/piotrek/'
+GEOSERVER_DATA_DIR = "/home/ubuntu/satellite-gis/"
+
 def download_from_s3_and_add_layer(image_key):
     image_dir = GEOSERVER_DATA_DIR + image_key.split('/')[0]
     filepath = GEOSERVER_DATA_DIR + image_key
