@@ -13,7 +13,7 @@ def create_temp_file(s3_name):
     yield
     s3_delete_file(s3_name+"_started")
 
-def _process_and_upload(image_path, calculation='rgb'):
+def _process_and_upload(image_path, calculation):
     b = BandCalculator(bands_dir=TEMP_DIR)
     s3_name = image_path.replace('/', '')+'{}'.format(calculation)
     with create_temp_file(s3_name):
